@@ -15,11 +15,13 @@
             <div class="canvas-container">
                 <canvas id="canvas"></canvas>
             </div>
-            <div class="upload-section">
-                <input type="file" id="imageInput" accept="image/*">
-                <label for="imageInput" class="upload-button">Chọn Ảnh</label>
+            <div class="controls">
+                <div class="upload-section">
+                    <input type="file" id="imageInput" accept="image/*" capture="user">
+                    <label for="imageInput" class="upload-button">Chọn Ảnh</label>
+                </div>
+                <button id="downloadBtn" style="display: none;">Tải ảnh về</button>
             </div>
-            <button id="downloadBtn" style="display: none;">Tải ảnh về</button>
         </div>
     </div>
     <script src="script.js"></script>

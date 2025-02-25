@@ -1,14 +1,29 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Tính toán kích thước canvas dựa trên container
+    const container = document.querySelector('.canvas-container');
+    const size = Math.min(container.clientWidth, container.clientHeight);
+
     const canvas = new fabric.Canvas('canvas', {
-        width: 500,
-        height: 500,
-        backgroundColor: 'transparent'
+        width: size,
+        height: size,
+        backgroundColor: 'transparent',
+        selection: false // Tắt selection để tránh bug trên mobile
     });
-    
+
     const imageInput = document.getElementById('imageInput');
     const downloadBtn = document.getElementById('downloadBtn');
     let userImage = null;
     let frame = null;
+
+    // Xử lý responsive
+    window.addEventListener('resize', () => {
+        const newSize = Math.min(container.clientWidth, container.clientHeight);
+        canvas.setDimensions({
+            width: newSize,
+            height: newSize
+        });
+        canvas.renderAll();
+    });
 
     // Tải frame
     fabric.Image.fromURL('./public/frame.png', function(img) {
@@ -26,16 +41,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Xóa ảnh cũ nếu có
                 if (userImage) {
                     canvas.remove(userImage);
                 }
 
-                // Tải ảnh mới
                 fabric.Image.fromURL(e.target.result, function(img) {
                     userImage = img;
                     
-                    // Tính toán tỷ lệ để ảnh vừa với frame
                     const frameSize = canvas.width * 0.85;
                     const scale = frameSize / Math.max(img.width, img.height);
                     
@@ -47,11 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         originY: 'center'
                     });
 
-                    // Thêm ảnh vào canvas
                     canvas.insertAt(userImage, 0);
                     canvas.renderAll();
-                    
-                    // Hiện nút download
                     downloadBtn.style.display = 'inline-block';
                 });
             };
@@ -59,30 +68,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Xử lý tải ảnh về
+    // Tối ưu cho mobile touch
+    canvas.on('touch:gesture', function(opt) {
+        var e = opt.e;
+        if (userImage) {
+            if (e.scale) {
+                userImage.scale(userImage.scaleX * e.scale);
+                canvas.renderAll();
+            }
+        }
+    });
+
+    // Prevent page scrolling when interacting with canvas on mobile
+    canvas.on('mouse:down', function() {
+        container.classList.add('dragging');
+    });
+
+    canvas.on('mouse:up', function() {
+        container.classList.remove('dragging');
+    });
+
+    // Download vẫn giữ nguyên như cũ
     downloadBtn.addEventListener('click', function() {
-        // Tạo canvas tạm thời với kích thước lớn hơn
         const tempCanvas = document.createElement('canvas');
         const tempCtx = tempCanvas.getContext('2d');
         
-        // Đặt kích thước 1500x1500 cho ảnh tải về
         tempCanvas.width = 1500;
         tempCanvas.height = 1500;
         
-        // Tạo một canvas tạm thời mới với Fabric
         const tempFabricCanvas = new fabric.Canvas(tempCanvas, {
             width: 1500,
             height: 1500
         });
 
-        // Clone các đối tượng từ canvas gốc
         canvas.getObjects().forEach(obj => {
             const clonedObj = fabric.util.object.clone(obj);
+            const scaleFactor = 1500 / size;
             
-            // Tính toán tỷ lệ scale mới (1500/500 = 3)
-            const scaleFactor = 1500 / 500;
-            
-            // Áp dụng scale mới
             clonedObj.scaleX = obj.scaleX * scaleFactor;
             clonedObj.scaleY = obj.scaleY * scaleFactor;
             clonedObj.left = obj.left * scaleFactor;
@@ -93,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         tempFabricCanvas.renderAll();
         
-        // Tạo link tải về với canvas độ phân giải cao
         const link = document.createElement('a');
         link.download = 'image-with-frame.png';
         link.href = tempFabricCanvas.toDataURL({
@@ -103,7 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         link.click();
 
-        // Dọn dẹp
         tempFabricCanvas.dispose();
     });
 }); 
