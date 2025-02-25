@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Frame cho Ảnh</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Thêm Frame cho Ảnh</h1>
+        
+        <div class="preview">
+            <div class="canvas-container">
+                <canvas id="canvas"></canvas>
+            </div>
+            <div class="upload-section">
+                <input type="file" id="imageInput" accept="image/*">
+                <label for="imageInput" class="upload-button">Chọn Ảnh</label>
+            </div>
+            <button id="downloadBtn" style="display: none;">Tải ảnh về</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
