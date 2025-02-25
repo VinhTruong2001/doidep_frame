@@ -10,7 +10,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="dropZone">
+        <div class="drop-overlay">
+            <div class="drop-message">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p>Thả ảnh vào đây để tải lên</p>
+            </div>
+        </div>
+        
         <h1>Tải ảnh lên để gắn vào viền</h1>
         
         <div class="preview">
@@ -19,7 +30,7 @@
             </div>
             <div class="controls">
                 <div class="upload-section">
-                    <input type="file" id="imageInput" accept="image/*" capture="user">
+                    <input type="file" id="imageInput" accept="image/*">
                     <label for="imageInput" class="upload-button">Chọn Ảnh</label>
                 </div>
                 <button id="downloadBtn" style="display: none;">Tải ảnh về</button>

@@ -156,4 +156,84 @@ document.addEventListener('DOMContentLoaded', function() {
 
         tempFabricCanvas.dispose();
     });
+
+    // Thêm code xử lý drag and drop vào đầu file
+    const dropZone = document.body;
+    const body = document.body;
+
+    // Ngăn chặn hành vi mặc định của trình duyệt
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    // Thêm class khi drag vào
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Xử lý khi thả file
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    function preventDefaults (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        body.classList.add('dragging');
+    }
+
+    function unhighlight(e) {
+        body.classList.remove('dragging');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('image/')) {
+                // Sử dụng lại logic xử lý ảnh hiện có
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (userImage) {
+                        canvas.remove(userImage);
+                    }
+
+                    fabric.Image.fromURL(e.target.result, function(img) {
+                        userImage = img;
+                        
+                        const frameSize = canvas.width * 0.85;
+                        const scale = frameSize / Math.max(img.width, img.height);
+                        
+                        userImage.scale(scale);
+                        userImage.set({
+                            left: canvas.width / 2,
+                            top: canvas.height / 2,
+                            originX: 'center',
+                            originY: 'center',
+                            selectable: false,
+                            hasControls: false,
+                            hasBorders: false,
+                            lockUniScaling: true
+                        });
+
+                        canvas.insertAt(userImage, 0);
+                        canvas.renderAll();
+                        downloadBtn.style.display = 'inline-block';
+                        editBtn.style.display = 'inline-block';
+                    });
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Vui lòng chỉ kéo thả file ảnh');
+            }
+        }
+    }
 }); 
