@@ -61,14 +61,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Xử lý tải ảnh về
     downloadBtn.addEventListener('click', function() {
-        const dataURL = canvas.toDataURL({
-            format: 'png',
-            quality: 1
-        });
+        // Tạo canvas tạm thời với kích thước lớn hơn
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
         
+        // Đặt kích thước 1500x1500 cho ảnh tải về
+        tempCanvas.width = 1500;
+        tempCanvas.height = 1500;
+        
+        // Tạo một canvas tạm thời mới với Fabric
+        const tempFabricCanvas = new fabric.Canvas(tempCanvas, {
+            width: 1500,
+            height: 1500
+        });
+
+        // Clone các đối tượng từ canvas gốc
+        canvas.getObjects().forEach(obj => {
+            const clonedObj = fabric.util.object.clone(obj);
+            
+            // Tính toán tỷ lệ scale mới (1500/500 = 3)
+            const scaleFactor = 1500 / 500;
+            
+            // Áp dụng scale mới
+            clonedObj.scaleX = obj.scaleX * scaleFactor;
+            clonedObj.scaleY = obj.scaleY * scaleFactor;
+            clonedObj.left = obj.left * scaleFactor;
+            clonedObj.top = obj.top * scaleFactor;
+            
+            tempFabricCanvas.add(clonedObj);
+        });
+
+        tempFabricCanvas.renderAll();
+        
+        // Tạo link tải về với canvas độ phân giải cao
         const link = document.createElement('a');
         link.download = 'image-with-frame.png';
-        link.href = dataURL;
+        link.href = tempFabricCanvas.toDataURL({
+            format: 'png',
+            quality: 1,
+            multiplier: 1
+        });
         link.click();
+
+        // Dọn dẹp
+        tempFabricCanvas.dispose();
     });
 }); 
