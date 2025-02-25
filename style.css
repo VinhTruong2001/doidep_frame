@@ -179,4 +179,55 @@ input[type="file"] {
     height: calc(100% - 80px);
     object-fit: contain;
     z-index: 2;
+}
+
+.mobile-instructions {
+    display: none;
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.mobile-instructions p {
+    margin: 5px 0;
+}
+
+/* Only show instructions on mobile */
+@media (max-width: 768px) {
+    .mobile-instructions {
+        display: block;
+    }
+}
+
+#editBtn {
+    padding: 10px 20px;
+    background-color: #FF9800;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+#editBtn.editing {
+    background-color: #4CAF50;
+}
+
+#editBtn:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    #editBtn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        width: 100%;
+        max-width: 200px;
+        border-radius: 25px;
+    }
 } 
