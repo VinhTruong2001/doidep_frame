@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Load frame
-    fabric.Image.fromURL('./public/frame.png', function(img) {
+    fabric.Image.fromURL('./public/frame.webp', function(img) {
         frame = img;
         frame.scaleToWidth(canvas.width);
         frame.scaleToHeight(canvas.height);
@@ -115,69 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             };
             reader.readAsDataURL(file);
-        }
-    });
-
-    // Modify touch events to check for edit mode
-    canvas.on('touch:gesture', function(opt) {
-        if (userImage && opt.e && isEditMode) {
-            const event = opt.e;
-            event.preventDefault();
-            if (event.scale !== undefined) {
-                const newScale = userImage.scaleX * event.scale;
-                if (newScale > 0.2 && newScale < 5) {
-                    userImage.scale(newScale);
-                    canvas.renderAll();
-                }
-            }
-        }
-    });
-
-    let isDragging = false;
-    
-    canvas.on('touch:start', function(opt) {
-        if (userImage && isEditMode) {
-            isDragging = true;
-            opt.e.preventDefault();
-            container.classList.add('dragging');
-        }
-    });
-
-    canvas.on('touch:move', function(opt) {
-        if (isDragging && userImage && opt.e && isEditMode) {
-            const event = opt.e;
-            event.preventDefault();
-            const pointer = canvas.getPointer(event);
-            userImage.set({
-                left: pointer.x,
-                top: pointer.y
-            });
-            canvas.renderAll();
-        }
-    });
-
-    canvas.on('touch:end', function() {
-        isDragging = false;
-        container.classList.remove('dragging');
-    });
-
-    // Enable mouse wheel zoom
-    canvas.on('mouse:wheel', function(opt) {
-        if (userImage) {
-            const delta = opt.e.deltaY;
-            let newScale = userImage.scaleX;
-            if (delta > 0) {
-                newScale *= 0.95;
-            } else {
-                newScale *= 1.05;
-            }
-            // Limit minimum and maximum scale
-            if (newScale > 0.2 && newScale < 5) {
-                userImage.scale(newScale);
-                canvas.renderAll();
-            }
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
         }
     });
 
